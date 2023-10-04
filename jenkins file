@@ -1,0 +1,76 @@
+pipeline {
+    agent any
+
+ 
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'feature/vasan-demo', changelog: false, credentialsId: 'bitbucket', poll: false, url: 'git@bitbucket.org:avonproducts/avon-cicd-demo-api.git'
+
+ 
+
+            }
+        }
+
+ 
+
+        stage('Build and Push Docker Image') {
+            steps {
+                script {
+                    def customImageName = 'mulesoft_custome_image'
+                    def dockerImageTag = "${customImageName}:${env.BUILD_NUMBER}"
+                    def JFrog_url3 = 'https://artifactory.avon.com/artifactory'
+                    def JFROG_USERNAME = 'hvna1rou'
+                    def JFROG_PASSWORD = 'AKCp8pRFD41U2omCxhFj7QoXv1H6GhC7wW8TuM2zASB9EBua33z62dBauNkmAnr4pRu12wBg5'
+
+ 
+
+                    // Build the Docker image
+                    sh "docker build -t ${dockerImageTag} jenkins_file1/."
+
+ 
+                     sh "echo ${SVC_JENKINS_AD_PASSWORD}"
+                    // Authenticate with JFrog Artifactory
+                   // sh "docker login -u ${JFROG_USERNAME} -p ${JFROG_PASSWORD} --password-stdin ${JFrog_url}"
+                  // sh echo "$JFROG_PASSWORD | "docker login -u ${JFROG_USERNAME} --password-stdin "
+                  // sh "docker login ${JFrog_url3} -u ${jenkins_gi3} --password-stdin <<< ${SVC_JENKINS_AD_PASSWORD}"
+                  sh "docker login ${JFrog_url3} -u ${JFROG_USERNAME} --password-stdin <<< ${JFROG_PASSWORD}"
+                  //sh curl -u ${JFROG_USERNAME}:${JFROG_PASSWORD} -X GET "http://ryelxdmaoci2.rye.avon.com:80/distribution/api/v1/system/info"
+                  //sh curl -u hvna1rou:AKCp8pRFD41U2omCxhFj7QoXv1H6GhC7wW8TuM2zASB9EBua33z62dBauNkmAnr4pRu12wBg5 -X GET "http://ryelxdmaoci2.rye.avon.com:80/"
+
+ 
+
+                    // Push the Docker image to JFrog Artifactory
+                  //  sh "docker push ${JFrog_url}mulesoft_docker_images/${dockerImageTag}"           
+                }
+
+ 
+
+ 
+
+            //     sh 'docker version'
+            //     sh 'docker build -t mulesoft_custome_image:latest jenkins_file1/.'
+            //     sh 'docker login -u hvna1rou -p AKCp8pRFD41U2omCxhFj7QoXv1H6GhC7wW8TuM2zASB9EBua33z62dBauNkmAnr4pRu12wBg5 --password-stdin http://ryelxdmaoci2.rye.avon.com:80/artifactory/artifactory-build-info'  
+            //     sh 'docker push http://ryelxdmaoci2.rye.avon.com:80/artifactory/artifactory-build-info/mulesoft_docker_images/mulesoft_custome_image:latest'
+            }
+        }
+
+ 
+
+    }
+
+ 
+
+    post {
+        success {
+            echo 'Docker image pushed successfully to JFrog Artifactory'
+        }
+        failure {
+            echo 'Failed to push Docker image to JFrog Artifactory'
+        }
+    }
+
+ 
+
+}
