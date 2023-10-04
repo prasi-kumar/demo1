@@ -4,14 +4,9 @@ pipeline {
  
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'feature/vasan-demo', changelog: false, credentialsId: 'bitbucket', poll: false, url: 'git@bitbucket.org:avonproducts/avon-cicd-demo-api.git'
-
- 
-
-            }
-        }
+        stage('SCM Checkout'){
+     git 'https://github.com/damodaranj/my-app.git'
+          }
 
  
 
