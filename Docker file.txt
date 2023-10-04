@@ -1,0 +1,23 @@
+# Use the Amazon Linux 2 base image
+FROM amazonlinux:2
+# Set environment variables
+ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0
+ENV M2_HOME=/usr/share/maven
+ENV MAVEN_HOME=/usr/share/maven
+ENV PATH=${M2_HOME}/bin:S{PATH}
+# Install necessary packages
+RUN yum install -y java-1.8.0-openjdk-devel && \ yum install -y tar && \ yum clean all && rm-rf /var/cache/yum
+# Install Maven 3.8.4
+RUN curl -LO https://archive.apache.org/dist/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz && \
+tar xzf apache-maven-3.8.4-bin.tar.gz && \ mv apache-maven-3.8.4 /usr/share/maven &&\
+rm apache-maven-3.8.4-bin.tar.gz
+# Create a directory for Maven settings
+RUN madir -p /root/.m2
+# Copy the custom settings.xml file into the container
+COPY settings.xml /root/.m2/
+# Print Maven version to verify installation
+RUN mvn --version
+## Set the working directory
+# WORKDIR /app
+## Define a command to run when the container starts
+# CMD ["bash"]
