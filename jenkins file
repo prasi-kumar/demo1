@@ -5,7 +5,7 @@ pipeline {
 
     stages {
         stage('SCM Checkout'){
-     git 'https://github.com/damodaranj/my-app.git'
+     git 'https://github.com/prasi-kumar/demo1.git'
           }
 
  
